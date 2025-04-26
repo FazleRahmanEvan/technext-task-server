@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from "express";
 
+interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data?: T;
+  errors?: any;
+}
+
 export const successResponse = <T>(
   res: Response,
   data: T,
@@ -20,9 +27,10 @@ export const errorResponse = (
   message: string,
   errors?: any
 ) => {
-  res.status(statusCode).json({
+  const response: ApiResponse<null> = {
     success: false,
     message,
     errors,
-  });
+  };
+  res.status(statusCode).json(response);
 };

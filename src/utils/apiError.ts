@@ -1,11 +1,13 @@
-export class ApiError extends Error {
-  statusCode: number;
-  isOperational: boolean;
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-  constructor(statusCode: number, message: string, isOperational = true) {
+export class ApiError extends Error {
+  constructor(
+    public statusCode: number,
+    message: string,
+    public errors?: any,
+    public isOperational: boolean = true
+  ) {
     super(message);
-    this.statusCode = statusCode;
-    this.isOperational = isOperational;
     Error.captureStackTrace(this, this.constructor);
   }
 }
