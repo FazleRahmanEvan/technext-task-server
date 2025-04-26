@@ -11,8 +11,8 @@ const envSchema = z.object({
   PORT: z.string().default("5000"),
   MONGODB_URI: z.string(),
   JWT_SECRET: z.string(),
-  //   JWT_EXPIRES_IN: z.string().default("3d"),
-  //   REFRESH_TOKEN_EXPIRES_IN: z.string().default("10d"),
+  JWT_EXPIRES_IN: z.string().default("3d"),
+  REFRESH_TOKEN_EXPIRES_IN: z.string().default("10d"),
 });
 
 export const env = envSchema.parse(process.env);
