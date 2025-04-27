@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth";
+import clientRouter from "./routes/clients";
 
 export const createApp = () => {
   const app = express();
@@ -22,6 +23,7 @@ export const createApp = () => {
 
   // Routes
   app.use("/api/auth", authRouter);
+  app.use("/api/clients", clientRouter);
 
   // Health check
   app.get("/api/health", (req, res) => {

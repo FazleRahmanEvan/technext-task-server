@@ -1,10 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
 import { User } from "../models/User";
 import { ApiError } from "../utils/apiError";
 import { registerSchema, loginSchema } from "../utils/validators";
+
+if (!env.JWT_SECRET || !env.JWT_EXPIRES_IN || !env.REFRESH_TOKEN_EXPIRES_IN) {
+  throw new Error("Missing environment variables for JWT");
+}
 
 export const registerUser = async (data: any) => {
   const validatedData = registerSchema.parse(data);
@@ -31,12 +34,17 @@ export const loginUser = async (data: any) => {
     throw new ApiError(401, "Invalid credentials");
   }
 
-  const accessToken = jwt.sign({ id: user._id }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN,
-  });
+  //   const accessToken = jwt.sign({ id: user._id, email: user.email }, env.JWT_SECRET, {
+  //     expiresIn: env.JWT_EXPIRES_IN,
+  //   });
+  const accessToken = jwt.sign(
+    { id: user._id, email: user.email },
+    env.JWT_SECRET,
+    { expiresIn: "24h" }
+  );
 
   const refreshToken = jwt.sign({ id: user._id }, env.JWT_SECRET, {
-    expiresIn: env.REFRESH_TOKEN_EXPIRES_IN,
+    expiresIn: "10d",
   });
 
   return { user, accessToken, refreshToken };
@@ -52,11 +60,12 @@ export const refreshAccessToken = async (token: string) => {
     }
 
     const newAccessToken = jwt.sign({ id: user._id }, env.JWT_SECRET, {
-      expiresIn: env.JWT_EXPIRES_IN,
+      expiresIn: "14h",
     });
 
     return { accessToken: newAccessToken };
   } catch (error) {
+    console.error("Error refreshing access token:", error);
     throw new ApiError(401, "Invalid or expired token");
   }
 };
